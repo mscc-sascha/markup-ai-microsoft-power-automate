@@ -38,7 +38,7 @@ Get started quickly with these ready-to-use guides:
 
 - **[Automated Content Monitoring with Power Automate for SharePoint and Teams](./docs/receipes.md)** - Quick Start guide showing how to create a content monitoring workflow in SharePoint and Teams using the Markup AI connector
 
-### Content Monitoring Helper Solution
+## Content Monitoring Helper Solution
 
 The **Markup AI Content Monitoring Tools** solution is available as an unmanaged solution at `/src/solutions/MarkupAIContentMonitoringTools_1_0_0_0.zip`. This helper solution provides two reusable child flows that simplify common document analysis tasks:
 
