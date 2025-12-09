@@ -1,0 +1,1465 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Markup AI Content Guardian Agents
+  description: >-
+      Markup AI checks, scores, and fixes content at scale. It enforces brand guidelines—style, consistency, clarity, and terminology—inside your existing workflows and tools. Developers and content owners integrate via MCP/LLMs or no-code solutions. It cuts manual reviews, inconsistency, and compliance risks to speed content production by checking, scoring, and rewriting content with your established brand guidelines. Results: consistent voice, reduced risk, and faster content publishing.
+host: api.markup.ai
+basePath: /
+schemes:
+  - https
+consumes: []
+produces:
+  - application/json
+paths:
+  /v1/style-guides/{style_guide_id}:
+    get:
+      summary: Get Style Guide
+      description: >-
+        Retrieve a specific style guide by ID, including its metadata such as
+        `name` and `status`.
+      operationId: GetStyleGuide
+      parameters:
+        - $ref: '#/parameters/StyleGuideId'
+      responses:
+        '200':
+          description: '200'
+          schema:
+            $ref: '#/definitions/StyleGuideResponse'
+        '401':
+          description: '401'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '403':
+          description: '403'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '404':
+          description: '404'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '422':
+          description: '422'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '500':
+          description: '500'
+          schema:
+            $ref: '#/definitions/StandardError'
+      x-ms-visibility: advanced
+    delete:
+      summary: Delete Style Guide
+      description: Delete a style guide by ID.
+      operationId: DeleteStyleGuide
+      parameters:
+        - $ref: '#/parameters/StyleGuideId'
+      responses:
+        '204':
+          description: '204'
+          schema:
+            type: string
+        '401':
+          description: '401'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '403':
+          description: '403'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '404':
+          description: '404'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '422':
+          description: '422'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '500':
+          description: '500'
+          schema:
+            $ref: '#/definitions/StandardError'
+      x-ms-visibility: advanced
+    patch:
+      summary: Update Style Guide
+      description: Update the name of an existing style guide.
+      operationId: UpdateStyleGuide
+      parameters:
+        - $ref: '#/parameters/StyleGuideId'
+        - name: body
+          in: body
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                x-ms-summary: Name
+                description: name
+            default:
+              name: string
+          required: true
+      responses:
+        '200':
+          description: '200'
+          schema:
+            $ref: '#/definitions/StyleGuideResponse'
+        '401':
+          description: '401'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '403':
+          description: '403'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '404':
+          description: '404'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '422':
+          description: '422'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '500':
+          description: '500'
+          schema:
+            $ref: '#/definitions/StandardError'
+        default:
+          description: '200'
+          schema:
+            $ref: '#/definitions/StyleGuideResponse'
+      x-ms-visibility: advanced
+  /v1/style-guides:
+    get:
+      summary: List Style Guides
+      description: Retrieve all style guides associated with your organization.
+      operationId: ListStyleGuides
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: '200'
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/StyleGuideResponse'
+        '401':
+          description: '401'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '403':
+          description: '403'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '422':
+          description: '422'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '500':
+          description: '500'
+          schema:
+            $ref: '#/definitions/StandardError'
+      x-ms-visibility: advanced
+    post:
+      summary: Create Style Guide
+      description: >-
+        Create a new style guide that can be used in checks, suggestions, and
+        rewrites.
+      operationId: CreateStyleGuide
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: formData
+          name: file_upload
+          description: The document to analyze. We accept PDF files (.pdf) up to 2 MB.
+          required: true
+          type: file
+        - in: formData
+          name: name
+          type: string
+          required: true
+          description: A friendly name for your style guide to help you identify it later
+        - in: formData
+          name: base_style_guide
+          required: true
+          type: string
+          description: >-
+            The base style guide to extend (AP, Chicago, or Microsoft). If not
+            provided, the style guide will be created from scratch.
+          x-ms-summary: Base Style Guide
+          enum:
+            - ap
+            - chicago
+            - microsoft
+          x-ms-enum:
+            name: base_style_guide
+            modelAsString: true
+            values:
+              - name: ap
+                value: ap
+                displayName: ap
+              - name: chicago
+                value: chicago
+                displayName: chicago
+              - name: microsoft
+                value: microsoft
+                displayName: microsoft
+      responses:
+        '202':
+          description: '202'
+          schema:
+            $ref: '#/definitions/StyleGuideResponse'
+        '401':
+          description: '401'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '403':
+          description: '403'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '413':
+          description: '413'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '422':
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/ValidationError'
+        '500':
+          description: '500'
+          schema:
+            $ref: '#/definitions/StandardError'
+        default:
+          description: '202'
+          schema:
+            $ref: '#/definitions/StyleGuideResponse'
+          x-ms-visibility: advanced
+  /v1/style/checks/{workflow_id}:
+    get:
+      summary: Get Style Check
+      description: Retrieve style check results.
+      operationId: GetStyleCheck
+      parameters:
+        - $ref: '#/parameters/WorkflowId'
+      responses:
+        '200':
+          description: '200'
+          schema:
+            $ref: '#/definitions/StyleCheckResponse'
+        '401':
+          description: '401'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '403':
+          description: '403'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '404':
+          description: '404'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '422':
+          description: '422'
+          schema:
+            $ref: '#/definitions/ValidationError'
+        '500':
+          description: '500'
+          schema:
+            $ref: '#/definitions/StandardError'
+      x-ms-visibility: important
+  /v1/style/checks:
+    post:
+      summary: Create Style Check
+      description: Analyze text for grammar, style, and clarity issues.
+      operationId: CreateStyleCheck
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/AnalysisFileUpload'
+        - $ref: '#/parameters/Dialect'
+        - $ref: '#/parameters/StyleGuideParam'
+        - $ref: '#/parameters/Tone'
+        - $ref: '#/parameters/WebhookUrl'
+      responses:
+        '202':
+          description: '202'
+          schema:
+            $ref: '#/definitions/AsyncOperationResponse'
+        '401':
+          description: '401'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '403':
+          description: '403'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '413':
+          description: '413'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '422':
+          description: '422'
+          schema:
+            $ref: '#/definitions/ValidationError'
+        '429':
+          description: '429'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '500':
+          description: '500'
+          schema:
+            $ref: '#/definitions/StandardError'
+        default:
+          description: '202'
+          schema:
+            $ref: '#/definitions/AsyncOperationResponse'
+      x-ms-visibility: important
+  /v1/style/suggestions/{workflow_id}:
+    get:
+      summary: Get Style Suggestion
+      description: Retrieve suggestion results.
+      operationId: GetStyleSuggestion
+      parameters:
+        - $ref: '#/parameters/WorkflowId'
+      responses:
+        '200':
+          description: '200'
+          schema:
+            $ref: '#/definitions/StyleSuggestionResponse'
+        '401':
+          description: '401'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '403':
+          description: '403'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '404':
+          description: '404'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '422':
+          description: '422'
+          schema:
+            $ref: '#/definitions/ValidationError'
+        '500':
+          description: '500'
+          schema:
+            $ref: '#/definitions/StandardError'
+      x-ms-visibility: important
+  /v1/style/suggestions:
+    post:
+      summary: Create Style Suggestion
+      description: Get suggested corrections for text.
+      operationId: CreateStyleSuggestion
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/AnalysisFileUpload'
+        - $ref: '#/parameters/Dialect'
+        - $ref: '#/parameters/StyleGuideParam'
+        - $ref: '#/parameters/Tone'
+        - $ref: '#/parameters/WebhookUrl'
+      responses:
+        '202':
+          description: '202'
+          schema:
+            $ref: '#/definitions/AsyncOperationResponse'
+        '401':
+          description: '401'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '403':
+          description: '403'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '413':
+          description: '413'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '422':
+          description: '422'
+          schema:
+            $ref: '#/definitions/ValidationError'
+        '429':
+          description: '429'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '500':
+          description: '500'
+          schema:
+            $ref: '#/definitions/StandardError'
+        default:
+          description: '202'
+          schema:
+            $ref: '#/definitions/AsyncOperationResponse'
+      x-ms-visibility: important
+  /v1/style/rewrites/{workflow_id}:
+    get:
+      summary: Get Style Rewrite
+      description: Retrieve rewrite results.
+      operationId: GetStyleRewrite
+      parameters:
+        - $ref: '#/parameters/WorkflowId'
+      responses:
+        '200':
+          description: '200'
+          schema:
+            $ref: '#/definitions/StyleRewriteResponse'
+        '401':
+          description: '401'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '403':
+          description: '403'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '404':
+          description: '404'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '422':
+          description: '422'
+          schema:
+            $ref: '#/definitions/ValidationError'
+        '500':
+          description: '500'
+          schema:
+            $ref: '#/definitions/StandardError'
+      x-ms-visibility: important
+  /v1/style/rewrites:
+    post:
+      summary: Create Style Rewrite
+      description: Rewrite text with style corrections applied.
+      operationId: CreateStyleRewrite
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/AnalysisFileUpload'
+        - $ref: '#/parameters/Dialect'
+        - $ref: '#/parameters/StyleGuideParam'
+        - $ref: '#/parameters/Tone'
+        - $ref: '#/parameters/WebhookUrl'
+      responses:
+        '202':
+          description: '202'
+          schema:
+            $ref: '#/definitions/AsyncOperationResponse'
+        '401':
+          description: '401'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '403':
+          description: '403'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '413':
+          description: '413'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '422':
+          description: '422'
+          schema:
+            $ref: '#/definitions/ValidationError'
+        '429':
+          description: '429'
+          schema:
+            $ref: '#/definitions/StandardError'
+        '500':
+          description: '500'
+          schema:
+            $ref: '#/definitions/StandardError'
+        default:
+          description: default
+          schema:
+            $ref: '#/definitions/AsyncOperationResponse'
+      x-ms-visibility: important
+definitions:
+  StyleGuideResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        description: ID
+        title: ID
+      name:
+        type: string
+        description: Name
+        title: Name
+      created_at:
+        type: string
+        description: Created At
+        title: Created At
+        format: date-time
+      created_by:
+        type: string
+        description: Created By
+        title: Created By
+      status:
+        type: string
+        description: Status
+        title: Status
+      summary:
+        type: string
+        description: Summary
+        title: Summary
+      updated_at:
+        type: string
+        description: Updated At
+        title: Updated At
+        format: date-time
+      updated_by:
+        type: string
+        description: Updated By
+        title: Updated By
+  StandardError:
+    type: object
+    properties:
+      detail:
+        type: string
+        description: Detail
+        title: Detail
+      status:
+        type: integer
+        format: int32
+        description: Status
+        title: Status
+      request_id:
+        type: string
+        description: Request ID
+        title: Request ID
+  ValidationError:
+    type: object
+    properties:
+      detail:
+        type: string
+        description: Error Summary
+        title: Error Summary
+      status:
+        type: integer
+        format: int32
+        description: Status Code
+        title: Status Code
+      request_id:
+        type: string
+        description: Request ID
+        title: Request ID
+      errors:
+        type: array
+        description: Individual Validation Errors
+        title: Errors
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              description: Error Type
+              title: Error Type
+            loc:
+              type: array
+              items:
+                type: string
+              description: Error Location
+              title: Error Location
+            msg:
+              type: string
+              description: Human Readable Message
+              title: Human Readable Message
+            input:
+              type: object
+              description: Original Input That Caused The Error
+              title: Input
+            ctx:
+              type: object
+              description: Additional Error Details
+              title: Context
+  AsyncOperationResponse:
+    type: object
+    properties:
+      status:
+        type: string
+        description: Status
+        title: Status
+      workflow_id:
+        type: string
+        description: Workflow ID
+        title: Workflow ID
+  StyleCheckResponse:
+    type: object
+    properties:
+      config:
+        type: object
+        properties:
+          dialect:
+            type: string
+            description: Language variant used for the style check
+            title: Configuration Dialect
+          style_guide:
+            type: object
+            properties:
+              style_guide_type:
+                type: string
+                description: Type of style guide used for the style check.
+                title: Configuration Style Guide Type
+              style_guide_id:
+                type: string
+                description: Unique identifier of the style guide used for the style check.
+                title: Configuration Style Guide ID
+          tone:
+            type: string
+            description: Tone used for the style check
+            title: Configuration Tone
+      original:
+        type: object
+        properties:
+          issues:
+            type: array
+            items:
+              type: object
+              properties:
+                original:
+                  type: string
+                  title: Original Text
+                  description: The original issue text detected
+                position:
+                  type: object
+                  properties:
+                    start_index:
+                      type: integer
+                      format: int32
+                      title: Start Position
+                      description: Position Index where the issue starts
+                subcategory:
+                  type: string
+                  title: Subcategory
+                  description: Subcategory of the issue
+                category:
+                  type: string
+                  description: Main category of the issue
+                  title: Category
+            description: List of style and grammar issues found
+            title: Issues
+          scores:
+            type: object
+            properties:
+              quality:
+                type: object
+                properties:
+                  score:
+                    type: integer
+                    format: int32
+                    description: Overall quality score
+                    title: Quality Score
+                  grammar:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Grammar quality score
+                        title: Grammar Score
+                      issues:
+                        type: integer
+                        format: int32
+                        description: Number of grammar issues found
+                        title: Grammar Issue Count
+                  consistency:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Consistency quality score
+                        title: Consistency Score
+                      issues:
+                        type: integer
+                        format: int32
+                        description: Number of consistency issues found
+                        title: Consistency Issue Count
+                  terminology:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Terminology quality score
+                        title: Terminology Score
+                      issues:
+                        type: integer
+                        format: int32
+                        description: Number of terminology issues found
+                        title: Terminology Issue Count
+              analysis:
+                type: object
+                properties:
+                  clarity:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Overall clarity score
+                        title: Clarity Score
+                      flesch_reading_ease:
+                        type: number
+                        format: float
+                        description: Flesch Reading Ease score (higher is easier to read)
+                        title: Flesch Reading Ease
+                      sentence_complexity:
+                        type: number
+                        format: float
+                        description: Complexity measure of sentences
+                        title: Sentence Complexity
+                      vocabulary_complexity:
+                        type: number
+                        format: float
+                        description: Complexity measure of vocabulary used
+                        title: Vocabulary Complexity
+                      sentence_count:
+                        type: integer
+                        format: int32
+                        description: Total number of sentences
+                        title: Sentences Count
+                      word_count:
+                        type: integer
+                        format: int32
+                        description: Total number of words
+                        title: Word Count
+                      average_sentence_length:
+                        type: number
+                        format: float
+                        description: Average number of words per sentence
+                        title: Average Sentence Length
+                  tone:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Overall tone alignment score
+                        title: Tone Score
+                      informality:
+                        type: number
+                        format: float
+                        description: Measured informality
+                        title: Informality
+                      liveliness:
+                        type: number
+                        format: float
+                        description: Measured liveliness
+                        title: Liveliness
+                      informality_alignment:
+                        type: number
+                        format: float
+                        description: How well informality matches target tone
+                        title: Informality Alignment
+                      liveliness_alignment:
+                        type: number
+                        format: float
+                        description: How well liveliness matches target tone
+                        title: Liveliness Target
+      workflow:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Unique workflow identifier
+            title: Workflow ID
+          api_version:
+            type: string
+            description: API version used for processing
+            title: API Version
+          generated_at:
+            type: string
+            description: Timestamp when results were generated
+            title: Generated At
+          status:
+            type: string
+            description: Current workflow status
+            title: Workflow Status
+          type:
+            type: string
+            description: Type of workflow operation
+            title: Workflow Type
+          webhook_response:
+            type: object
+            properties:
+              url:
+                type: string
+                description: Webhook URL that was called
+                title: Webhook URL
+              status_code:
+                type: integer
+                format: int32
+                description: HTTP status code from webhook call
+                title: Webhook Status Code
+  StyleSuggestionResponse:
+    type: object
+    properties:
+      config:
+        type: object
+        properties:
+          dialect:
+            type: string
+            description: Language variant used for the style suggestion
+            title: Configuration Dialect
+          style_guide:
+            type: object
+            properties:
+              style_guide_type:
+                type: string
+                description: Type of style guide used for the style suggestion.
+                title: Configuration Style Guide Type
+              style_guide_id:
+                type: string
+                description: Unique identifier of the style guide used for the style suggestion.
+                title: Configuration Style Guide ID
+          tone:
+            type: string
+            description: Tone used for the style suggestion
+            title: Configuration Tone
+      original:
+        type: object
+        properties:
+          issues:
+            type: array
+            items:
+              type: object
+              properties:
+                original:
+                  type: string
+                  title: Original Text
+                  description: The original issue text detected
+                position:
+                  type: object
+                  properties:
+                    start_index:
+                      type: integer
+                      format: int32
+                      title: Start Position
+                      description: Position Index where the issue starts
+                subcategory:
+                  type: string
+                  title: Subcategory
+                  description: Subcategory of the issue
+                category:
+                  type: string
+                  description: Main category of the issue
+                  title: Category
+            description: List of style and grammar issues found
+            title: Issues
+          scores:
+            type: object
+            properties:
+              quality:
+                type: object
+                properties:
+                  score:
+                    type: integer
+                    format: int32
+                    description: Overall quality score
+                    title: Quality Score
+                  grammar:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Grammar quality score
+                        title: Grammar Score
+                      issues:
+                        type: integer
+                        format: int32
+                        description: Number of grammar issues found
+                        title: Grammar Issue Count
+                  consistency:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Consistency quality score
+                        title: Consistency Score
+                      issues:
+                        type: integer
+                        format: int32
+                        description: Number of consistency issues found
+                        title: Consistency Issue Count
+                  terminology:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Terminology quality score
+                        title: Terminology Score
+                      issues:
+                        type: integer
+                        format: int32
+                        description: Number of terminology issues found
+                        title: Terminology Issue Count
+              analysis:
+                type: object
+                properties:
+                  clarity:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Overall clarity score
+                        title: Clarity Score
+                      flesch_reading_ease:
+                        type: number
+                        format: float
+                        description: Flesch Reading Ease score (higher is easier to read)
+                        title: Flesch Reading Ease
+                      sentence_complexity:
+                        type: number
+                        format: float
+                        description: Complexity measure of sentences
+                        title: Sentence Complexity
+                      vocabulary_complexity:
+                        type: number
+                        format: float
+                        description: Complexity measure of vocabulary used
+                        title: Vocabulary Complexity
+                      sentence_count:
+                        type: integer
+                        format: int32
+                        description: Total number of sentences
+                        title: Sentences Count
+                      word_count:
+                        type: integer
+                        format: int32
+                        description: Total number of words
+                        title: Word Count
+                      average_sentence_length:
+                        type: number
+                        format: float
+                        description: Average number of words per sentence
+                        title: Average Sentence Length
+                  tone:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Overall tone alignment score
+                        title: Tone Score
+                      informality:
+                        type: number
+                        format: float
+                        description: Measured informality
+                        title: Informality
+                      liveliness:
+                        type: number
+                        format: float
+                        description: Measured liveliness
+                        title: Liveliness
+                      informality_alignment:
+                        type: number
+                        format: float
+                        description: How well informality matches target tone
+                        title: Informality Alignment
+                      liveliness_alignment:
+                        type: number
+                        format: float
+                        description: How well liveliness matches target tone
+                        title: Liveliness Target
+      workflow:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Unique workflow identifier
+            title: Workflow ID
+          api_version:
+            type: string
+            description: API version used for processing
+            title: API Version
+          generated_at:
+            type: string
+            description: Timestamp when results were generated
+            title: Generated At
+          status:
+            type: string
+            description: Current status of the workflow
+            title: Workflow Status
+          type:
+            type: string
+            description: Type of workflow operation
+            title: Workflow Type
+          webhook_response:
+            type: object
+            properties:
+              url:
+                type: string
+                description: Webhook callback URL
+                title: Webhook URL
+              status_code:
+                type: integer
+                format: int32
+                description: HTTP status code of the webhook response
+                title: Webhook Status Code
+  StyleRewriteResponse:
+    type: object
+    properties:
+      config:
+        type: object
+        properties:
+          dialect:
+            type: string
+            description: Language variant used for the style check
+            title: Configuration Dialect
+          style_guide:
+            type: object
+            properties:
+              style_guide_type:
+                type: string
+                description: Type of style guide used for the style check.
+                title: Configuration Style Guide Type
+              style_guide_id:
+                type: string
+                description: Unique identifier of the style guide used for the style check.
+                title: Configuration Style Guide ID
+          tone:
+            type: string
+            description: Tone used for the style check
+            title: Configuration Tone
+      original:
+        type: object
+        properties:
+          issues:
+            type: array
+            items:
+              type: object
+              properties:
+                original:
+                  type: string
+                  title: Original Text
+                  description: The original issue text detected
+                position:
+                  type: object
+                  properties:
+                    start_index:
+                      type: integer
+                      format: int32
+                      title: Start Position
+                      description: Position Index where the issue starts
+                subcategory:
+                  type: string
+                  title: Subcategory
+                  description: Subcategory of the issue
+                category:
+                  type: string
+                  description: Main category of the issue
+                  title: Category
+            description: List of style and grammar issues found
+            title: Issues
+          scores:
+            type: object
+            properties:
+              quality:
+                type: object
+                properties:
+                  score:
+                    type: integer
+                    format: int32
+                    description: Overall quality score
+                    title: Quality Score
+                  grammar:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Grammar quality score
+                        title: Grammar Score
+                      issues:
+                        type: integer
+                        format: int32
+                        description: Number of grammar issues found
+                        title: Grammar Issue Count
+                  consistency:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Consistency quality score
+                        title: Consistency Score
+                      issues:
+                        type: integer
+                        format: int32
+                        description: Number of consistency issues found
+                        title: Consistency Issue Count
+                  terminology:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Terminology quality score
+                        title: Terminology Score
+                      issues:
+                        type: integer
+                        format: int32
+                        description: Number of terminology issues found
+                        title: Terminology Issue Count
+              analysis:
+                type: object
+                properties:
+                  clarity:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Overall clarity score
+                        title: Clarity Score
+                      flesch_reading_ease:
+                        type: number
+                        format: float
+                        description: Flesch Reading Ease score (higher is easier to read)
+                        title: Flesch Reading Ease
+                      sentence_complexity:
+                        type: number
+                        format: float
+                        description: Complexity measure of sentences
+                        title: Sentence Complexity
+                      vocabulary_complexity:
+                        type: number
+                        format: float
+                        description: Complexity measure of vocabulary used
+                        title: Vocabulary Complexity
+                      sentence_count:
+                        type: integer
+                        format: int32
+                        description: Total number of sentences
+                        title: Sentences Count
+                      word_count:
+                        type: integer
+                        format: int32
+                        description: Total number of words
+                        title: Word Count
+                      average_sentence_length:
+                        type: number
+                        format: float
+                        description: Average number of words per sentence
+                        title: Average Sentence Length
+                  tone:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Overall tone alignment score
+                        title: Tone Score
+                      informality:
+                        type: number
+                        format: float
+                        description: Measured informality
+                        title: Informality
+                      liveliness:
+                        type: number
+                        format: float
+                        description: Measured liveliness
+                        title: Liveliness
+                      informality_alignment:
+                        type: number
+                        format: float
+                        description: How well informality matches target tone
+                        title: Informality Alignment
+                      liveliness_alignment:
+                        type: number
+                        format: float
+                        description: How well liveliness matches target tone
+                        title: Liveliness Target
+      rewrite:
+        type: object
+        properties:
+          text:
+            type: string
+            description: The rewritten text with improvements applied
+            title: Rewritten Text
+          scores:
+            type: object
+            properties:
+              quality:
+                type: object
+                properties:
+                  score:
+                    type: integer
+                    format: int32
+                    description: Overall quality score for the rewritten text
+                    title: Rewrite Quality Score
+                  grammar:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Grammar quality score for the rewritten text
+                        title: Rewrite Grammar Score
+                      issues:
+                        type: integer
+                        format: int32
+                        description: Number of grammar issues in the rewritten text
+                        title: Rewrite Grammar Issue Count
+                  consistency:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Style consistency score for the rewritten text
+                        title: Rewrite Consistency Score
+                      issues:
+                        type: integer
+                        format: int32
+                        description: Number of consistency issues in the rewritten text
+                        title: Rewrite Consistency Issue Count
+                  terminology:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Terminology correctness score for the rewritten text
+                        title: Rewrite Terminology Score
+                      issues:
+                        type: integer
+                        format: int32
+                        description: Number of terminology issues in the rewritten text
+                        title: Rewrite Terminology Issue Count
+              analysis:
+                type: object
+                properties:
+                  clarity:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Overall clarity score for the rewritten text
+                        title: Rewrite Clarity Score
+                      flesch_reading_ease:
+                        type: number
+                        format: float
+                        description: Flesch Reading Ease score (0-100) for the rewritten text
+                        title: Rewrite Flesch Reading Ease
+                      sentence_complexity:
+                        type: number
+                        format: float
+                        description: Average sentence complexity rating for the rewritten text
+                        title: Rewrite Sentence Complexity
+                      vocabulary_complexity:
+                        type: number
+                        format: float
+                        description: Vocabulary difficulty rating for the rewritten text
+                        title: Rewrite Vocabulary Complexity
+                      sentence_count:
+                        type: integer
+                        format: int32
+                        description: Total number of sentences in the rewritten text
+                        title: Rewrite Sentence Count
+                      word_count:
+                        type: integer
+                        format: int32
+                        description: Total number of words in the rewritten text
+                        title: Rewrite Word Count
+                      average_sentence_length:
+                        type: number
+                        format: float
+                        description: Average words per sentence in the rewritten text
+                        title: Rewrite Average Sentence Length
+                  tone:
+                    type: object
+                    properties:
+                      score:
+                        type: integer
+                        format: int32
+                        description: Overall tone score for the rewritten text
+                        title: Rewrite Tone Score
+                      informality:
+                        type: number
+                        format: float
+                        description: Measured informality level in the rewritten text
+                        title: Rewrite Informality
+                      liveliness:
+                        type: number
+                        format: float
+                        description: Measured liveliness level in the rewritten text
+                        title: Rewrite Liveliness
+                      informality_alignment:
+                        type: number
+                        format: float
+                        description: How well rewritten text informality matches the target
+                        title: Rewrite Informality Alignment
+                      liveliness_alignment:
+                        type: number
+                        format: float
+                        description: How well rewritten text liveliness matches the target
+                        title: Rewrite Liveliness Alignment
+      workflow:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Unique workflow identifier
+            title: Workflow ID
+          api_version:
+            type: string
+            description: API version used for processing
+            title: API Version
+          generated_at:
+            type: string
+            description: Timestamp when results were generated
+            title: Generated At
+          status:
+            type: string
+            description: Current status of the workflow
+            title: Workflow Status
+          type:
+            type: string
+            description: Type of workflow operation
+            title: Workflow Type
+          webhook_response:
+            type: object
+            properties:
+              url:
+                type: string
+                description: Webhook callback URL
+                title: Webhook URL
+              status_code:
+                type: integer
+                format: int32
+                description: HTTP status code of the webhook response
+                title: Webhook Status Code
+parameters:
+  StyleGuideId:
+    name: style_guide_id
+    in: path
+    type: string
+    required: true
+    x-ms-summary: Style Guide Id
+  WorkflowId:
+    name: workflow_id
+    in: path
+    type: string
+    required: true
+    x-ms-summary: Workflow Id
+  AnalysisFileUpload:
+    in: formData
+    name: file_upload
+    x-ms-summary: Document
+    description: >-
+      The document to analyze. Text (.txt), Markdown (.md), HTML (.html .htm),
+      DITA (.dita, .xml), and PDF (.pdf) files are accepted. The max file size
+      is 1.5 MB.
+    required: true
+    type: file
+  Dialect:
+    in: formData
+    name: dialect
+    type: string
+    x-ms-summary: Dialect
+    required: true
+    description: >-
+      The language variant you'd like us to use for analysis. Choose from
+      American English, British English, or other supported dialects.
+    enum:
+      - american_english
+      - british_english
+      - canadian_english
+    x-ms-enum:
+      name: Dialect
+      modelAsString: true
+      values:
+        - name: american_english
+          value: american_english
+          displayName: American English
+        - name: british_english
+          value: british_english
+          displayName: British English
+        - name: canadian_english
+          value: canadian_english
+          displayName: Canadian English
+  StyleGuideParam:
+    in: formData
+    name: style_guide
+    required: true
+    type: string
+    description: >-
+      The style guide to follow for your content. You can use a style guide ID
+      or choose from built-in options: `ap`, `chicago`, or `microsoft`.
+    x-ms-summary: Style Guide
+    x-ms-dynamic-values:
+      operationId: ListStyleGuides
+      value-path: id
+      value-title: name
+  Tone:
+    in: formData
+    name: tone
+    type: string
+    description: >-
+      The tone variation you're aiming for. Options include formal, academic,
+      casual, and other tone variations to match your content goals..
+    enum:
+      - academic
+      - confident
+      - conversational
+      - empathetic
+      - engaging
+      - friendly
+      - professional
+      - technical
+    x-ms-enum:
+      name: Tone
+      modelAsString: true
+      values:
+        - name: academic
+          value: academic
+          displayName: academic
+        - name: confident
+          value: confident
+          displayName: confident
+        - name: conversational
+          value: conversational
+          displayName: conversational
+        - name: empathetic
+          value: empathetic
+          displayName: empathetic
+        - name: engaging
+          value: engaging
+          displayName: engaging
+        - name: friendly
+          value: friendly
+          displayName: friendly
+        - name: professional
+          value: professional
+          displayName: professional
+        - name: technical
+          value: technical
+          displayName: technical
+  WebhookUrl:
+    in: formData
+    name: webhook_url
+    type: string
+    description: A URL that results will be POSTed to once the process completes.
+responses: {}
+securityDefinitions:
+  api_key:
+    type: apiKey
+    in: header
+    name: Authorization
+security:
+  - api_key: []
+tags: []

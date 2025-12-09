@@ -1,0 +1,158 @@
+{
+    "type": "object",
+    "properties": {
+        "config": {
+            "type": "object",
+            "properties": {
+                "dialect": {
+                    "type": "string"
+                },
+                "style_guide": {
+                    "type": "object",
+                    "properties": {
+                        "style_guide_type": {
+                            "type": "string"
+                        },
+                        "style_guide_id": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "tone": {}
+            }
+        },
+        "original": {
+            "type": "object",
+            "properties": {
+                "issues": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "original": {
+                                "type": "string"
+                            },
+                            "position": {
+                                "type": "object",
+                                "properties": {
+                                    "start_index": {
+                                        "type": "integer"
+                                    }
+                                }
+                            },
+                            "subcategory": {
+                                "type": "string"
+                            },
+                            "category": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "original",
+                            "position",
+                            "subcategory",
+                            "category"
+                        ]
+                    }
+                },
+                "scores": {
+                    "type": "object",
+                    "properties": {
+                        "quality": {
+                            "type": "object",
+                            "properties": {
+                                "score": {
+                                    "type": "integer"
+                                },
+                                "grammar": {
+                                    "type": "object",
+                                    "properties": {
+                                        "score": {
+                                            "type": "integer"
+                                        },
+                                        "issues": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "consistency": {
+                                    "type": "object",
+                                    "properties": {
+                                        "score": {
+                                            "type": "integer"
+                                        },
+                                        "issues": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "terminology": {
+                                    "type": "object",
+                                    "properties": {
+                                        "score": {
+                                            "type": "integer"
+                                        },
+                                        "issues": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "analysis": {
+                            "type": "object",
+                            "properties": {
+                                "clarity": {
+                                    "type": "object",
+                                    "properties": {
+                                        "score": {
+                                            "type": "integer"
+                                        },
+                                        "flesch_reading_ease": {
+                                            "type": "number"
+                                        },
+                                        "sentence_complexity": {
+                                            "type": "number"
+                                        },
+                                        "vocabulary_complexity": {
+                                            "type": "number"
+                                        },
+                                        "sentence_count": {
+                                            "type": "integer"
+                                        },
+                                        "word_count": {
+                                            "type": "integer"
+                                        },
+                                        "average_sentence_length": {
+                                            "type": "number"
+                                        }
+                                    }
+                                },
+                                "tone": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "workflow": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "api_version": {
+                    "type": "string"
+                },
+                "generated_at": {},
+                "status": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "webhook_response": {}
+            }
+        }
+    }
+}
