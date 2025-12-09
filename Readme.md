@@ -32,6 +32,12 @@ Contains general documentation, guides, and helper resources:
 - Recipes and usage examples
 - Technical specifications
 
+## Quick Start
+
+Get started quickly with these ready-to-use guides:
+
+- **[Automated Content Monitoring with Power Automate for SharePoint and Teams](./docs/receipes.md)** - Quick Start guide showing how to create a content monitoring workflow in SharePoint and Teams using the Markup AI connector
+
 ## Getting Started
 
 Refer to the documentation in the `/docs` folder for detailed setup instructions and usage examples.
